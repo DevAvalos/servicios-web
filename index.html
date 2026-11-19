@@ -21,19 +21,22 @@
     --teal-soft:rgba(46,230,197,0.10);
   }
   *{box-sizing:border-box;}
-  html{background:var(--bg);}
+  html{background:var(--bg);overflow-x:hidden;width:100%;}
   body{
     margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Space Grotesk',sans-serif;
-    position:relative;overflow-x:hidden;isolation:isolate;
+    position:relative;overflow-x:hidden;width:100%;isolation:isolate;
   }
   a{color:inherit;}
   .wrap{max-width:900px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
 
-  /* ---------- fondo: puntos finos + manchas de color suaves ---------- */
+  /* ---------- fondo: puntos finos ----------
+     Va con la pagina (position:absolute, no fixed): un patron parejo de puntos
+     se ve igual este fijo o no, y asi no obliga al navegador a mantenerlo
+     recompuesto aparte en cada frame de scroll. */
   body::before{
     content:"";
-    position:fixed;
-    inset:-100px;
+    position:absolute;
+    inset:0;
     z-index:-3;
     background-color:var(--bg);
     background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1.6px);
@@ -41,6 +44,7 @@
     animation: dotsDrift 70s linear infinite;
     will-change: transform;
   }
+  /* ---------- manchas de color suaves (si se quedan fijas a la pantalla) ---------- */
   body::after{
     content:"";
     position:fixed;
@@ -63,26 +67,14 @@
     100%{ transform: translate(-3%, 3%) scale(1.06); }
   }
 
-  /* ---------- particulas subiendo como humo ---------- */
-  .particle{
+  /* ---------- particulas subiendo como humo (dibujadas en un canvas, ver script) ---------- */
+  #embers{
     position:fixed;
-    bottom:-10px;
-    left:var(--left);
-    width:var(--size);
-    height:var(--size);
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(46,230,197,0.95), rgba(46,230,197,0) 72%);
-    pointer-events:none;
+    inset:0;
     z-index:-1;
-    opacity:0;
-    animation: rise var(--dur) linear var(--delay) infinite;
-    will-change: transform, opacity;
-  }
-  @keyframes rise{
-    0%{ transform:translate(0,0) scale(1); opacity:0; }
-    10%{ opacity:var(--op); }
-    75%{ opacity:calc(var(--op) * 0.55); }
-    100%{ transform:translate(var(--sway), -112vh) scale(0.4); opacity:0; }
+    width:100%;
+    height:100%;
+    pointer-events:none;
   }
 
   @keyframes fadeUp{
@@ -336,60 +328,13 @@
   }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
-    .particle{display:none;}
+    #embers{display:none;}
   }
 </style>
 </head>
 <body>
 
-  <span class="particle" style="--left:32.4%;--size:3.2px;--dur:16.2s;--delay:-18.3s;--sway:3.0px;--op:0.49;"></span>
-  <span class="particle" style="--left:6.6%;--size:4.8px;--dur:9.4s;--delay:-9.6s;--sway:-39.0px;--op:0.35;"></span>
-  <span class="particle" style="--left:42.2%;--size:6.2px;--dur:10.4s;--delay:-14.6s;--sway:11.0px;--op:0.79;"></span>
-  <span class="particle" style="--left:57.0%;--size:4.3px;--dur:19.7s;--delay:-18.9s;--sway:32.0px;--op:0.45;"></span>
-  <span class="particle" style="--left:15.0%;--size:3.0px;--dur:12.4s;--delay:-0.4s;--sway:-29.0px;--op:0.6;"></span>
-  <span class="particle" style="--left:63.0%;--size:4.2px;--dur:15.0s;--delay:-18.5s;--sway:-40.0px;--op:0.41;"></span>
-  <span class="particle" style="--left:67.0%;--size:4.4px;--dur:12.5s;--delay:-5.9s;--sway:-4.0px;--op:0.46;"></span>
-  <span class="particle" style="--left:78.1%;--size:5.6px;--dur:11.7s;--delay:-6.2s;--sway:2.0px;--op:0.76;"></span>
-  <span class="particle" style="--left:71.8%;--size:3.8px;--dur:19.8s;--delay:-17.2s;--sway:-7.0px;--op:0.69;"></span>
-  <span class="particle" style="--left:15.7%;--size:4.7px;--dur:9.4s;--delay:-4.0s;--sway:24.0px;--op:0.6;"></span>
-  <span class="particle" style="--left:85.9%;--size:3.9px;--dur:16.6s;--delay:-5.7s;--sway:7.0px;--op:0.54;"></span>
-  <span class="particle" style="--left:82.5%;--size:6.8px;--dur:14.2s;--delay:-4.1s;--sway:-40.0px;--op:0.66;"></span>
-  <span class="particle" style="--left:63.8%;--size:7.0px;--dur:18.0s;--delay:-13.2s;--sway:-10.0px;--op:0.65;"></span>
-  <span class="particle" style="--left:3.2%;--size:4.6px;--dur:10.8s;--delay:-17.2s;--sway:-40.0px;--op:0.7;"></span>
-  <span class="particle" style="--left:13.5%;--size:3.6px;--dur:13.3s;--delay:0.9s;--sway:-38.0px;--op:0.53;"></span>
-  <span class="particle" style="--left:54.3%;--size:6.5px;--dur:18.0s;--delay:0.7s;--sway:-20.0px;--op:0.52;"></span>
-  <span class="particle" style="--left:35.8%;--size:6.5px;--dur:19.5s;--delay:-16.4s;--sway:-29.0px;--op:0.42;"></span>
-  <span class="particle" style="--left:23.6%;--size:4.7px;--dur:15.5s;--delay:-13.7s;--sway:-45.0px;--op:0.52;"></span>
-  <span class="particle" style="--left:36.8%;--size:5.0px;--dur:19.5s;--delay:-3.4s;--sway:1.0px;--op:0.62;"></span>
-  <span class="particle" style="--left:66.6%;--size:2.7px;--dur:18.9s;--delay:-1.3s;--sway:34.0px;--op:0.71;"></span>
-  <span class="particle" style="--left:39.1%;--size:4.3px;--dur:10.1s;--delay:-4.8s;--sway:-39.0px;--op:0.34;"></span>
-  <span class="particle" style="--left:21.3%;--size:3.2px;--dur:12.7s;--delay:-18.7s;--sway:-45.0px;--op:0.38;"></span>
-  <span class="particle" style="--left:10.8%;--size:4.1px;--dur:9.3s;--delay:1.0s;--sway:10.0px;--op:0.38;"></span>
-  <span class="particle" style="--left:25.5%;--size:4.1px;--dur:13.0s;--delay:-17.1s;--sway:31.0px;--op:0.82;"></span>
-  <span class="particle" style="--left:46.2%;--size:4.7px;--dur:9.9s;--delay:-17.5s;--sway:-14.0px;--op:0.44;"></span>
-  <span class="particle" style="--left:81.4%;--size:3.2px;--dur:9.3s;--delay:2.8s;--sway:3.0px;--op:0.38;"></span>
-  <span class="particle" style="--left:53.7%;--size:2.6px;--dur:14.8s;--delay:3.5s;--sway:33.0px;--op:0.66;"></span>
-  <span class="particle" style="--left:26.3%;--size:4.2px;--dur:10.8s;--delay:-1.5s;--sway:3.0px;--op:0.71;"></span>
-  <span class="particle" style="--left:33.0%;--size:3.5px;--dur:17.9s;--delay:3.6s;--sway:32.0px;--op:0.72;"></span>
-  <span class="particle" style="--left:80.4%;--size:5.8px;--dur:11.5s;--delay:-7.6s;--sway:-13.0px;--op:0.32;"></span>
-  <span class="particle" style="--left:3.7%;--size:3.8px;--dur:11.9s;--delay:-3.4s;--sway:41.0px;--op:0.53;"></span>
-  <span class="particle" style="--left:91.9%;--size:6.9px;--dur:19.5s;--delay:-11.2s;--sway:-25.0px;--op:0.42;"></span>
-  <span class="particle" style="--left:20.1%;--size:3.4px;--dur:15.9s;--delay:1.6s;--sway:31.0px;--op:0.55;"></span>
-  <span class="particle" style="--left:64.3%;--size:6.1px;--dur:9.9s;--delay:-4.1s;--sway:37.0px;--op:0.71;"></span>
-  <span class="particle" style="--left:73.8%;--size:4.7px;--dur:11.0s;--delay:-1.1s;--sway:-15.0px;--op:0.72;"></span>
-  <span class="particle" style="--left:95.3%;--size:4.3px;--dur:13.4s;--delay:2.7s;--sway:20.0px;--op:0.39;"></span>
-  <span class="particle" style="--left:13.3%;--size:3.2px;--dur:19.0s;--delay:-0.6s;--sway:-32.0px;--op:0.73;"></span>
-  <span class="particle" style="--left:96.1%;--size:5.5px;--dur:12.9s;--delay:-6.8s;--sway:-33.0px;--op:0.31;"></span>
-  <span class="particle" style="--left:95.2%;--size:5.4px;--dur:14.8s;--delay:2.4s;--sway:-6.0px;--op:0.75;"></span>
-  <span class="particle" style="--left:81.1%;--size:3.4px;--dur:11.8s;--delay:-13.0s;--sway:-23.0px;--op:0.6;"></span>
-  <span class="particle" style="--left:26.2%;--size:4.4px;--dur:10.4s;--delay:1.8s;--sway:-13.0px;--op:0.54;"></span>
-  <span class="particle" style="--left:57.6%;--size:6.6px;--dur:13.6s;--delay:2.0s;--sway:0.0px;--op:0.58;"></span>
-  <span class="particle" style="--left:51.8%;--size:2.6px;--dur:13.8s;--delay:-15.6s;--sway:-45.0px;--op:0.72;"></span>
-  <span class="particle" style="--left:17.7%;--size:4.6px;--dur:17.0s;--delay:-6.6s;--sway:-16.0px;--op:0.57;"></span>
-  <span class="particle" style="--left:54.9%;--size:6.0px;--dur:10.2s;--delay:-6.6s;--sway:-23.0px;--op:0.44;"></span>
-  <span class="particle" style="--left:75.9%;--size:4.8px;--dur:15.2s;--delay:-1.8s;--sway:37.0px;--op:0.53;"></span>
-  <span class="particle" style="--left:60.4%;--size:4.8px;--dur:14.6s;--delay:-3.4s;--sway:-4.0px;--op:0.58;"></span>
-  <span class="particle" style="--left:47.4%;--size:6.7px;--dur:16.7s;--delay:1.0s;--sway:40.0px;--op:0.43;"></span>
+<canvas id="embers" aria-hidden="true"></canvas>
 
 <div class="wrap">
   <header class="top">
@@ -532,6 +477,77 @@
   } else {
     revealEls.forEach(function(el) { el.classList.add('visible'); });
   }
+
+  // particulas tipo humo, dibujadas en un solo canvas en vez de 48 elementos
+  // separados en el DOM (eso es lo que hacia lento el scroll en celular)
+  (function() {
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var canvas = document.getElementById('embers');
+    if (!canvas || reduced) return;
+    var ctx = canvas.getContext('2d');
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var W, H;
+
+    function resize() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // punto suave pre-dibujado una sola vez: cada cuadro solo se "estampa",
+    // no se recalcula el degradado por particula
+    var SPR = 48;
+    var sprite = document.createElement('canvas');
+    sprite.width = sprite.height = SPR;
+    var sctx = sprite.getContext('2d');
+    var grad = sctx.createRadialGradient(SPR / 2, SPR / 2, 0, SPR / 2, SPR / 2, SPR / 2);
+    grad.addColorStop(0, 'rgba(46,230,197,0.95)');
+    grad.addColorStop(0.7, 'rgba(46,230,197,0.35)');
+    grad.addColorStop(1, 'rgba(46,230,197,0)');
+    sctx.fillStyle = grad;
+    sctx.fillRect(0, 0, SPR, SPR);
+
+    var particles = [];
+    for (var i = 0; i < 46; i++) {
+      particles.push({
+        x: Math.random() * 100,
+        size: 2.5 + Math.random() * 4.5,
+        dur: 9 + Math.random() * 11,
+        t0: -Math.random() * 20,
+        sway: (Math.random() - 0.5) * 90,
+        op: 0.3 + Math.random() * 0.5
+      });
+    }
+
+    var start = performance.now();
+    function frame(now) {
+      var elapsed = (now - start) / 1000;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        var t = (elapsed + p.t0) % p.dur;
+        if (t < 0) t += p.dur;
+        var progress = t / p.dur;
+        var y = H + 20 - progress * (H + 140);
+        var x = (p.x / 100) * W + p.sway * progress;
+        var op;
+        if (progress < 0.1) op = (progress / 0.1) * p.op;
+        else if (progress < 0.75) op = p.op;
+        else op = p.op * (1 - (progress - 0.75) / 0.25);
+        if (op < 0) op = 0;
+        var s = p.size * (1 - progress * 0.5);
+        ctx.globalAlpha = op;
+        ctx.drawImage(sprite, x - s, y - s, s * 2, s * 2);
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
 </script>
 
 </body>
